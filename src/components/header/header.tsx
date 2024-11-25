@@ -15,8 +15,8 @@ const Header = () => {
           <li><a href="#">Contact</a></li>
         </ul>
         <div className="auth-links">
-          <a href="#" className="sign-up">Sign Up</a>
-          <a href="#" className="login">Login</a>
+          <Link to="/signup" className="sign-up">Sign Up</Link>
+          <Link to="/login" className="login">Login</Link>
         </div>
       </nav>
     </header>
