@@ -10,9 +10,9 @@ const Header = () => {
         <ul className="nav-links">
           <li><a href="#">Home</a></li>
           <li><a href="#">Courses</a></li>
-          <li><a href="#">About Us</a></li>
+          <li><Link to="/About">About</Link></li>
           <li><a href="#">Pricing</a></li>
-          <li><Link to="/contact" className="sign-up">Contact</Link></li>
+          <li><Link to="/contact">Contact</Link></li>
         </ul>
         <div className="auth-links">
           <Link to="/signup" className="sign-up">Sign Up</Link>
