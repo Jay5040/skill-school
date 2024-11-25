@@ -6,6 +6,7 @@ import Footer from './components/footer/footer'
 import LoginPage from './Pages/loginpage/loginpage';
 import SignUpPage from './Pages/signuppage/signuppage';
 import ContactPage from './Pages/contectpage/contactpage';
+import AboutPage from './Pages/aboutpage/aboutpage';
 
 
 function App() {
@@ -14,9 +15,9 @@ function App() {
       <Header />
       <Routes>
         {/* <Route path="/" element={<HomePage />} />
-        <Route path="/courses" element={<CoursesPage />} />
+        <Route path="/courses" element={<CoursesPage />} /> */}
         <Route path="/about" element={<AboutPage />} />
-        <Route path="/pricing" element={<PricingPage />} /> */}
+        {/* <Route path="/pricing" element={<PricingPage />} /> */}
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/signup" element={<SignUpPage />} />
         <Route path="/login" element={<LoginPage />} />
