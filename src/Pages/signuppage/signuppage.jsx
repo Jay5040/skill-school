@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import "./signuppage"; 
+import db from "../../../firebase";
+import { collection, getDocs, setDoc, doc } from "firebase/firestore"; 
 
 const SignUpPage = () => {
   const [formData, setFormData] = useState({
@@ -40,7 +42,7 @@ const SignUpPage = () => {
     return validationErrors;
   };
 
-  const handleSignUp = (e) => {
+  const handleSignUp = async (e) => {
     e.preventDefault();
     const validationErrors = validate();
     setErrors(validationErrors);
@@ -49,8 +51,9 @@ const SignUpPage = () => {
       return;
     }
 
-    const existingUsers = JSON.parse(localStorage.getItem("allUsers")) || [];
-    const existingGmails = existingUsers.map((user) => user.gmail);
+    const usersRef = collection(db, "users");
+    const querySnapshot = await getDocs(usersRef);
+    const existingGmails = querySnapshot.docs.map(doc => doc.data().gmail);
 
     if (existingGmails.includes(formData.gmail)) {
       setErrors({
@@ -60,13 +63,15 @@ const SignUpPage = () => {
     }
 
     const newUser = {
-      ...formData,
+      firstName: formData.firstName,
+      lastName: formData.lastName,
+      phone: formData.phone,
+      gmail: formData.gmail,
+      gmailPassword: formData.gmailPassword,
     };
 
-    localStorage.setItem(
-      "allUsers",
-      JSON.stringify([...existingUsers, newUser])
-    );
+    // Store the new user in Firestore
+    await setDoc(doc(db, "users", formData.gmail), newUser);
 
     setSuccessMessage("Account created successfully! Redirecting to login...");
     setTimeout(() => {
