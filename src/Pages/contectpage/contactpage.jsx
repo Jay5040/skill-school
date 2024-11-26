@@ -20,7 +20,6 @@ const ContactPage = () => {
     }
   }, []);
 
-  // Handle input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -29,19 +28,15 @@ const ContactPage = () => {
     }));
   };
 
-  // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Include the loginGmail in the form data
     const dataToStore = { ...formData, loginGmail };
 
-    // Store form data and Gmail info in local storage
     localStorage.setItem('contactdata', JSON.stringify(dataToStore));
 
     alert('Your message has been saved locally!');
 
-    // Optionally reset the form
     setFormData({
       firstName: '',
       lastName: '',
