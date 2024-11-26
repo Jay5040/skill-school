@@ -1,13 +1,17 @@
 import React, { useState } from "react";
 import "./Loginpage.scss";
+import db from "../../../firebase";
+import { query, where, getDocs, collection, addDoc } from "firebase/firestore";
 
 const Login = () => {
   const [gmail, setGmail] = useState("");
   const [gmailPassword, setGmailPassword] = useState("");
   const [errors, setErrors] = useState({ gmail: "", gmailPassword: "" });
+  const usersRef = collection(db, "users"); 
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
+
     let validationErrors = {};
 
     if (!gmail) {
@@ -24,32 +28,35 @@ const Login = () => {
       return;
     }
 
-    const existingUsers = JSON.parse(localStorage.getItem("allUsers")) || [];
-    const existingGmail = existingUsers.map((user) => user.gmail);
+    const q = query(usersRef, where("gmail", "==", gmail));
+    const querySnapshot = await getDocs(q);
 
-    if (existingGmail.includes(gmail)) {
-      const index = existingGmail.indexOf(gmail);
-      const user = existingUsers[index];
-
+    if (querySnapshot.empty) {
+      setErrors({ ...errors, gmail: "User ID does not exist. Please create an account." });
+    } else {
+      const user = querySnapshot.docs[0].data(); 
       if (user.gmailPassword === gmailPassword) {
         const loginData = {
           gmail,
           gmailPassword,
+          loginTime: new Date().toISOString(), 
         };
 
-        localStorage.setItem("loginGmail", JSON.stringify(loginData));
-        alert("Login successful!");
-        window.location = "/home"; 
+        try {
+          await addDoc(collection(db, "logins"), loginData);
+          alert("Login successful!");
+          window.location = "/home"; 
+        } catch (e) {
+          console.error("Error storing login data: ", e);
+        }
       } else {
         setErrors({ ...errors, gmailPassword: "Your User ID and Password do not match" });
       }
-    } else {
-      setErrors({ ...errors, gmail: "User ID does not exist. Please create an account." });
     }
   };
 
   const redirectToSignup = () => {
-    window.location = "/signup"; 
+    window.location = "/signup";
   };
 
   return (
