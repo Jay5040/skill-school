@@ -6,6 +6,9 @@ import Footer from './components/footer/footer'
 import LoginPage from './Pages/loginpage/loginpage';
 import SignUpPage from './Pages/signuppage/signuppage';
 import ContactPage from './Pages/contectpage/contactpage';
+import Dashboard from './Pages/dashboardpage/TeacherDashboard';
+import TeacherDashboard from './Pages/dashboardpage/TeacherDashboard';
+
 import AboutPage from './Pages/aboutpage/aboutpage';
 import CoursesPage from './Pages/coursecardpage/coursecardpage';
 
@@ -22,10 +25,14 @@ function App() {
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/signup" element={<SignUpPage />} />
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/dashboard/TeacherDashboard" element={<TeacherDashboard />} />
       </Routes>
       <Footer />
+     
     </Router>
+
   );
+  
 }
 
 export default App

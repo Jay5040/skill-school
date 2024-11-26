@@ -1,0 +1,54 @@
+$primary-color: #ffa500;
+$sidebar-bg: #ffe4b3;
+$text-color: #333;
+$card-bg: #fffbea;
+$box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+
+.teacher-dashboard {
+  display: flex;
+  height: 100vh;
+
+  .sidebar {
+    background-color: $sidebar-bg;
+    color: $text-color;
+    width: 250px;
+    padding: 20px;
+
+    h2 {
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+    }
+
+    nav ul {
+      list-style: none;
+      padding: 0;
+
+      li {
+        cursor: pointer;
+        margin: 10px 0;
+        padding: 10px;
+        color: $text-color;
+        border-radius: 5px;
+
+        &:hover {
+          color: $primary-color;
+        }
+      }
+    }
+  }
+
+  .main-content {
+    flex: 1;
+    padding: 20px;
+    background: #fffbea;
+
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+    }
+
+    .dashboard-cards, .course-list, .profile-details {
+      margin-top: 20px;
+    }
+  }
+}
