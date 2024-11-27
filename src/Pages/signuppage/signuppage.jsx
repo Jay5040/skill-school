@@ -1,4 +1,7 @@
 import React, { useState } from "react";
+import "./signuppage"; 
+import db from "../../../firebase";
+import { collection, getDocs, setDoc, doc } from "firebase/firestore"; 
 import { collection, addDoc } from "firebase/firestore";
 import db from "../../../firebase"; // Ensure the path to firebase.js is correct
 import "./signuppage.scss";
@@ -51,14 +54,27 @@ const SignUpPage = () => {
       return;
     }
 
-    try {
-      await addDoc(collection(db, "users"), {
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        phone: formData.phone,
-        gmail: formData.gmail,
-        gmailPassword: formData.gmailPassword,
+    const usersRef = collection(db, "users");
+    const querySnapshot = await getDocs(usersRef);
+    const existingGmails = querySnapshot.docs.map(doc => doc.data().gmail);
+
+    if (existingGmails.includes(formData.gmail)) {
+      setErrors({
+        gmail: "This Gmail ID already exists. Please use a different Gmail.",
       });
+      return;
+    }
+
+    const newUser = {
+      firstName: formData.firstName,
+      lastName: formData.lastName,
+      phone: formData.phone,
+      gmail: formData.gmail,
+      gmailPassword: formData.gmailPassword,
+    };
+
+    // Store the new user in Firestore
+    await setDoc(doc(db, "users", formData.gmail), newUser);
 
       setSuccessMessage("Account created successfully! Redirecting to login...");
       setTimeout(() => {
