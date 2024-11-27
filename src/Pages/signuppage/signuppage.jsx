@@ -1,9 +1,6 @@
 import React, { useState } from "react";
-import "./signuppage"; 
 import db from "../../../firebase";
-import { collection, getDocs, setDoc, doc } from "firebase/firestore"; 
-import { collection, addDoc } from "firebase/firestore";
-import db from "../../../firebase"; // Ensure the path to firebase.js is correct
+import { collection, getDocs, setDoc, doc } from "firebase/firestore";
 import "./signuppage.scss";
 
 const SignUpPage = () => {
@@ -20,14 +17,11 @@ const SignUpPage = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
+    setFormData({ ...formData, [name]: value });
   };
 
   const validate = () => {
-    let validationErrors = {};
+    const validationErrors = {};
     const phoneRegex = /^[0-9]{10}$/;
 
     if (!formData.firstName) validationErrors.firstName = "Enter Your First Name";
@@ -50,130 +44,59 @@ const SignUpPage = () => {
     const validationErrors = validate();
     setErrors(validationErrors);
 
-    if (Object.keys(validationErrors).length > 0) {
-      return;
-    }
+    if (Object.keys(validationErrors).length > 0) return;
 
-    const usersRef = collection(db, "users");
-    const querySnapshot = await getDocs(usersRef);
-    const existingGmails = querySnapshot.docs.map(doc => doc.data().gmail);
+    try {
+      const usersRef = collection(db, "users");
+      const querySnapshot = await getDocs(usersRef);
+      const existingGmails = querySnapshot.docs.map((doc) => doc.data().gmail);
 
-    if (existingGmails.includes(formData.gmail)) {
-      setErrors({
-        gmail: "This Gmail ID already exists. Please use a different Gmail.",
-      });
-      return;
-    }
+      if (existingGmails.includes(formData.gmail)) {
+        setErrors({ gmail: "This Gmail ID already exists. Please use a different Gmail." });
+        return;
+      }
 
-    const newUser = {
-      firstName: formData.firstName,
-      lastName: formData.lastName,
-      phone: formData.phone,
-      gmail: formData.gmail,
-      gmailPassword: formData.gmailPassword,
-    };
-
-    // Store the new user in Firestore
-    await setDoc(doc(db, "users", formData.gmail), newUser);
+      const newUser = { ...formData };
+      await setDoc(doc(db, "users", formData.gmail), newUser);
 
       setSuccessMessage("Account created successfully! Redirecting to login...");
       setTimeout(() => {
-        window.location = "/login"; // Redirect to login page
+        window.location = "/login";
       }, 2000);
     } catch (error) {
       console.error("Error adding document to Firestore: ", error);
+      setErrors({ firebase: "Failed to create an account. Please try again." });
     }
   };
 
   return (
-    <div className="login-container">
-      <div className="login-box">
+    <div className="signup-container">
+      <div className="signup-box">
         <h2>Sign Up</h2>
         {successMessage && <p className="success-message">{successMessage}</p>}
         <form onSubmit={handleSignUp}>
-          <div className="form-group">
-            <label htmlFor="firstName">First Name</label>
-            <input
-              type="text"
-              id="firstName"
-              name="firstName"
-              value={formData.firstName}
-              onChange={handleInputChange}
-              placeholder="Enter your First Name"
-            />
-            {errors.firstName && (
-              <span className="error-message">{errors.firstName}</span>
-            )}
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="lastName">Last Name</label>
-            <input
-              type="text"
-              id="lastName"
-              name="lastName"
-              value={formData.lastName}
-              onChange={handleInputChange}
-              placeholder="Enter your Last Name"
-            />
-            {errors.lastName && (
-              <span className="error-message">{errors.lastName}</span>
-            )}
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="phone">Phone</label>
-            <input
-              type="text"
-              id="phone"
-              name="phone"
-              value={formData.phone}
-              onChange={handleInputChange}
-              placeholder="Enter your Phone Number"
-            />
-            {errors.phone && (
-              <span className="error-message">{errors.phone}</span>
-            )}
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="gmail">Gmail</label>
-            <input
-              type="email"
-              id="gmail"
-              name="gmail"
-              value={formData.gmail}
-              onChange={handleInputChange}
-              placeholder="Enter your Gmail"
-            />
-            {errors.gmail && <span className="error-message">{errors.gmail}</span>}
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="gmailPassword">Password</label>
-            <input
-              type="password"
-              id="gmailPassword"
-              name="gmailPassword"
-              value={formData.gmailPassword}
-              onChange={handleInputChange}
-              placeholder="Enter your Password"
-            />
-            {errors.gmailPassword && (
-              <span className="error-message">{errors.gmailPassword}</span>
-            )}
-          </div>
-
-          <button type="submit" className="login-button">
-            Sign Up
-          </button>
+          {["firstName", "lastName", "phone", "gmail", "gmailPassword"].map((field) => (
+            <div className="form-group" key={field}>
+              <label htmlFor={field}>
+                {field === "gmailPassword" ? "Password" : field.charAt(0).toUpperCase() + field.slice(1)}
+              </label>
+              <input
+                type={field === "gmailPassword" ? "password" : "text"}
+                id={field}
+                name={field}
+                value={formData[field]}
+                onChange={handleInputChange}
+                placeholder={`Enter your ${field.charAt(0).toUpperCase() + field.slice(1)}`}
+              />
+              {errors[field] && <span className="error-message">{errors[field]}</span>}
+            </div>
+          ))}
+          <button type="submit" className="signup-button">Sign Up</button>
         </form>
-        <div className="signup-link">
+        <div className="redirect-link">
           <p>
             Already have an account?{" "}
-            <a href="/login" className="login-link">
-              Login Here
-            </a>
+            <a href="/login" className="login-link">Login Here</a>
           </p>
         </div>
       </div>
