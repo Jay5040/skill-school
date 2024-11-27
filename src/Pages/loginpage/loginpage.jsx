@@ -1,61 +1,67 @@
 import React, { useState } from "react";
+import { useAuth } from "../../components/authentication/AuthContext";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 import "./Loginpage.scss";
+import db from "../../../firebase";
+import { collection, query, where, getDocs } from "firebase/firestore";
 
 const Login = () => {
+  const { setIsLoggedIn } = useAuth();
   const [gmail, setGmail] = useState("");
   const [gmailPassword, setGmailPassword] = useState("");
-  const [errors, setErrors] = useState({ gmail: "", gmailPassword: "" });
+  const [errors, setErrors] = useState({});
+  const [successMessage, setSuccessMessage] = useState("");
+  const navigate = useNavigate(); // Hook for navigation
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
+
+    // Validation
     let validationErrors = {};
-
-    if (!gmail) {
-      validationErrors.gmail = "Please Enter Your Gmail";
-    }
-
-    if (!gmailPassword) {
-      validationErrors.gmailPassword = "Please Enter Password";
-    }
+    if (!gmail) validationErrors.gmail = "Please enter your Gmail.";
+    if (!gmailPassword) validationErrors.gmailPassword = "Please enter your Password.";
 
     setErrors(validationErrors);
 
-    if (Object.keys(validationErrors).length > 0) {
-      return;
-    }
+    // Stop submission if there are validation errors
+    if (Object.keys(validationErrors).length > 0) return;
 
-    const existingUsers = JSON.parse(localStorage.getItem("allUsers")) || [];
-    const existingGmail = existingUsers.map((user) => user.gmail);
+    try {
+      // Query Firestore for user credentials
+      const usersCollection = collection(db, "users");
+      const q = query(usersCollection, where("gmail", "==", gmail));
+      const querySnapshot = await getDocs(q);
 
-    if (existingGmail.includes(gmail)) {
-      const index = existingGmail.indexOf(gmail);
-      const user = existingUsers[index];
+      if (!querySnapshot.empty) {
+        const userData = querySnapshot.docs[0].data();
 
-      if (user.gmailPassword === gmailPassword) {
-        const loginData = {
-          gmail,
-          gmailPassword,
-        };
+        if (userData.gmailPassword === gmailPassword) {
+          setSuccessMessage("Login successful! Redirecting...");
+          setIsLoggedIn(true); // Update global authentication state
+          console.log("User verified.");
 
-        localStorage.setItem("loginGmail", JSON.stringify(loginData));
-        alert("Login successful!");
-        window.location = "/home"; 
+          // Redirect to the home page using useNavigate
+          setTimeout(() => {
+            navigate("/"); // Or navigate("/home") if needed
+          }, 2000);
+        } else {
+          setErrors({ general: "Invalid email or password." });
+        }
       } else {
-        setErrors({ ...errors, gmailPassword: "Your User ID and Password do not match" });
+        setErrors({ general: "No account found with this Gmail." });
       }
-    } else {
-      setErrors({ ...errors, gmail: "User ID does not exist. Please create an account." });
+    } catch (error) {
+      console.error("Error verifying user credentials: ", error);
+      setErrors({ general: "An error occurred during login. Please try again later." });
     }
-  };
-
-  const redirectToSignup = () => {
-    window.location = "/signup"; 
   };
 
   return (
     <div className="login-container">
       <div className="login-box">
         <h2>Login</h2>
+        {successMessage && <p className="success-message">{successMessage}</p>}
+        {errors.general && <p className="error-message">{errors.general}</p>}
         <form onSubmit={handleLogin}>
           <div className="form-group">
             <label htmlFor="gmail">Gmail</label>
@@ -87,14 +93,6 @@ const Login = () => {
             Login
           </button>
         </form>
-        <div className="signup-link">
-          <p>
-            Don't have an account?{" "}
-            <a onClick={redirectToSignup} href="#signup">
-              Create Account
-            </a>
-          </p>
-        </div>
       </div>
     </div>
   );

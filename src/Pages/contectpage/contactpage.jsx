@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './contactpage.scss';
+import db from '../../../firebase'; // Ensure the path is correct
+import { collection, addDoc } from "firebase/firestore";
 
 const ContactPage = () => {
   const [formData, setFormData] = useState({
@@ -13,6 +15,7 @@ const ContactPage = () => {
 
   const [loginGmail, setLoginGmail] = useState('');
 
+  // Retrieve logged-in Gmail from local storage
   useEffect(() => {
     const storedGmail = localStorage.getItem('loginGmail');
     if (storedGmail) {
@@ -28,23 +31,28 @@ const ContactPage = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const dataToStore = { ...formData, loginGmail };
 
-    localStorage.setItem('contactdata', JSON.stringify(dataToStore));
+    try {
+      const messagesCollection = collection(db, 'contactMessages'); // Correctly initialize collection reference
+      await addDoc(messagesCollection, dataToStore);
+      alert('Your message has been successfully submitted to the server!');
 
-    alert('Your message has been saved locally!');
-
-    setFormData({
-      firstName: '',
-      lastName: '',
-      email: '',
-      phone: '',
-      subject: '',
-      message: ''
-    });
+      setFormData({
+        firstName: '',
+        lastName: '',
+        email: '',
+        phone: '',
+        subject: '',
+        message: ''
+      });
+    } catch (error) {
+      console.error('Error saving message to Firestore:', error);
+      alert('An error occurred while submitting your message. Please try again.');
+    }
   };
 
   return (

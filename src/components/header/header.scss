@@ -4,9 +4,11 @@
   color: #fff;
 }
 
-.header-content, .footer-content {
-    width: 90%; /* Or a maximum width, like max-width: 1200px */
-    margin: 0 auto;
+.header-content,
+.footer-content {
+  width: 90%;
+  /* Or a maximum width, like max-width: 1200px */
+  margin: 0 auto;
 }
 
 .navbar {
@@ -42,6 +44,12 @@
 }
 
 .auth-links a {
+  font-weight: bold;
+  color: #ffa500;
+  text-decoration: none;
+}
+
+.Login {
   font-weight: bold;
   color: #ffa500;
   text-decoration: none;

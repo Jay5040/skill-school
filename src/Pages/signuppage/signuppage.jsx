@@ -1,5 +1,7 @@
 import React, { useState } from "react";
-import "./signuppage"; 
+import { collection, addDoc } from "firebase/firestore";
+import db from "../../../firebase"; // Ensure the path to firebase.js is correct
+import "./signuppage.scss";
 
 const SignUpPage = () => {
   const [formData, setFormData] = useState({
@@ -40,7 +42,7 @@ const SignUpPage = () => {
     return validationErrors;
   };
 
-  const handleSignUp = (e) => {
+  const handleSignUp = async (e) => {
     e.preventDefault();
     const validationErrors = validate();
     setErrors(validationErrors);
@@ -49,29 +51,22 @@ const SignUpPage = () => {
       return;
     }
 
-    const existingUsers = JSON.parse(localStorage.getItem("allUsers")) || [];
-    const existingGmails = existingUsers.map((user) => user.gmail);
-
-    if (existingGmails.includes(formData.gmail)) {
-      setErrors({
-        gmail: "This Gmail ID already exists. Please use a different Gmail.",
+    try {
+      await addDoc(collection(db, "users"), {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        phone: formData.phone,
+        gmail: formData.gmail,
+        gmailPassword: formData.gmailPassword,
       });
-      return;
+
+      setSuccessMessage("Account created successfully! Redirecting to login...");
+      setTimeout(() => {
+        window.location = "/login"; // Redirect to login page
+      }, 2000);
+    } catch (error) {
+      console.error("Error adding document to Firestore: ", error);
     }
-
-    const newUser = {
-      ...formData,
-    };
-
-    localStorage.setItem(
-      "allUsers",
-      JSON.stringify([...existingUsers, newUser])
-    );
-
-    setSuccessMessage("Account created successfully! Redirecting to login...");
-    setTimeout(() => {
-      window.location = "/login"; // Redirect to login page
-    }, 2000);
   };
 
   return (
