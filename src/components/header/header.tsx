@@ -17,10 +17,9 @@ const Header = () => {
       <nav className="navbar">
         <div className="logo">Skill School</div>
         <ul className="nav-links">
-          <li><a href="#">Home</a></li>
+          <li><Link to="/studentDashbrod">Dashbord</Link></li>
           <li><Link to="/courses">Course</Link></li>
           <li><Link to="/about">About</Link></li>
-          <li><a href="#">Pricing</a></li>
           <li><Link to="/contact">Contact</Link></li>
         </ul>
         <div className="auth-links">

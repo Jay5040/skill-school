@@ -6,10 +6,11 @@ import Footer from './components/footer/footer';
 import LoginPage from './Pages/loginpage/loginpage';
 import SignUpPage from './Pages/signuppage/signuppage';
 import ContactPage from './Pages/contectpage/contactpage';
-import TeacherDashboard from './Pages/dashboardpage/TeacherDashboard';
 import AboutPage from './Pages/aboutpage/aboutpage';
-import CoursesPage from './Pages/coursecardpage/coursecardpage';
+import StudentDashboard from './Pages/dashboardpage/StudentDashboard';
 import { AuthProvider } from './components/authentication/AuthContext'; // Import AuthProvider
+import CourseCardPage from './Pages/coursecardpage/coursecardpage';
+import AssignmentPage from './components/assigment/assignment';
 
 function App() {
   return (
@@ -17,12 +18,14 @@ function App() {
       <Router>
         <Header />
         <Routes>
-          <Route path="/courses" element={<CoursesPage />} />
+          <Route path="/" element={<StudentDashboard />} />
+          <Route path="/studentDashbrod" element={<StudentDashboard />} />
+          <Route path="/courses" element={<CourseCardPage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/signup" element={<SignUpPage />} />
           <Route path="/login" element={<LoginPage />} />
-          <Route path="/dashboard/TeacherDashboard" element={<TeacherDashboard />} />
+          <Route path="/Assignment" element={<AssignmentPage />} />
         </Routes>
         <Footer />
       </Router>

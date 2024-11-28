@@ -1,0 +1,32 @@
+.student-dashboard {
+  display: flex; /* Layout with Sidebar and Content */
+  height: 100vh; /* Full height of the viewport */
+  background-color: #f4f5f7; /* Light grey background for contrast */
+}
+
+.sidebar {
+  width: 250px;
+  background-color: #fff;
+  padding: 20px;
+  border-right: 2px solid #e0e0e0;
+}
+
+.dashboard-content {
+  flex: 1; /* Take remaining space after the sidebar */
+  padding: 2rem;
+  overflow-y: auto; /* Scroll if content overflows */
+}
+
+.dashboard-content h1 {
+  font-size: 2rem;
+  color: #333;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.dashboard-stats {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Responsive grid */
+  margin-top: 1rem;
+}

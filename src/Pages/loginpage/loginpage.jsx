@@ -16,18 +16,15 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
 
-    // Validation
     let validationErrors = {};
     if (!gmail) validationErrors.gmail = "Please enter your Gmail.";
     if (!gmailPassword) validationErrors.gmailPassword = "Please enter your Password.";
 
     setErrors(validationErrors);
 
-    // Stop submission if there are validation errors
     if (Object.keys(validationErrors).length > 0) return;
 
     try {
-      // Query Firestore for user credentials
       const usersCollection = collection(db, "users");
       const q = query(usersCollection, where("gmail", "==", gmail));
       const querySnapshot = await getDocs(q);
@@ -37,12 +34,11 @@ const Login = () => {
 
         if (userData.gmailPassword === gmailPassword) {
           setSuccessMessage("Login successful! Redirecting...");
-          setIsLoggedIn(true); // Update global authentication state
+          setIsLoggedIn(true);
           console.log("User verified.");
 
-          // Redirect to the home page using useNavigate
           setTimeout(() => {
-            navigate("/"); // Or navigate("/home") if needed
+            navigate("/studentDashbrod"); 
           }, 2000);
         } else {
           setErrors({ general: "Invalid email or password." });

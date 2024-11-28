@@ -24,9 +24,12 @@ const SignUpPage = () => {
     const validationErrors = {};
     const phoneRegex = /^[0-9]{10}$/;
 
-    if (!formData.firstName) validationErrors.firstName = "Enter Your First Name";
-    if (!formData.lastName) validationErrors.lastName = "Enter Your Last Name";
-    if (!formData.phone) validationErrors.phone = "Enter Phone Number";
+    if (!formData.firstName) 
+      validationErrors.firstName = "Enter Your First Name";
+    if (!formData.lastName) 
+      validationErrors.lastName = "Enter Your Last Name";
+    if (!formData.phone) 
+      validationErrors.phone = "Enter Phone Number";
     else if (!phoneRegex.test(formData.phone))
       validationErrors.phone = "Phone number must be 10 digits";
     if (!formData.gmail || !formData.gmail.endsWith("@gmail.com"))

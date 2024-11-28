@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './contactpage.scss';
 import db from '../../../firebase'; // Ensure the path is correct
-import { collection, addDoc } from "firebase/firestore";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 
 const ContactPage = () => {
   const [formData, setFormData] = useState({
@@ -15,7 +15,6 @@ const ContactPage = () => {
 
   const [loginGmail, setLoginGmail] = useState('');
 
-  // Retrieve logged-in Gmail from local storage
   useEffect(() => {
     const storedGmail = localStorage.getItem('loginGmail');
     if (storedGmail) {
@@ -34,7 +33,11 @@ const ContactPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const dataToStore = { ...formData, loginGmail };
+    const dataToStore = { 
+      ...formData, 
+      loginGmail, 
+      timestamp: serverTimestamp() 
+    };
 
     try {
       const messagesCollection = collection(db, 'contactMessages'); // Correctly initialize collection reference
